@@ -1,16 +1,20 @@
 import sys
 import re
 
-def xor_encrypt_buf_to_csharp(key: bytes, buf_string: str):
+def xor_encrypt_buf_from_file(key: bytes, file_path: str):
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        buf_string = file.read()
+
     # Extract byte array from the provided C# code string
-    match = re.search(r'byte\[\] buf = new byte\[\d+\] \{(.*?)\};', buf_string)
+    match = re.search(r'byte\[\] buf = new byte\[\d+\] \{(.*?)\};', buf_string, re.DOTALL)
     if not match:
         print("Invalid input format. Expected: byte[] buf = new byte[752] {0xfe, 0x4a, ... };")
         sys.exit(1)
     
-    # Convert the extracted byte string into a bytearray
-    byte_string = match.group(1)
-    data = bytearray(int(byte, 16) for byte in byte_string.split(', '))
+    # Clean and split the byte string
+    byte_string = match.group(1).replace('\n', '').replace('\r', '').replace(' ', '')
+    data = bytearray(int(byte, 16) for byte in byte_string.split(','))
 
     # XOR the data with the key
     encrypted_data = bytearray()
@@ -39,10 +43,10 @@ def xor_encrypt_buf_to_csharp(key: bytes, buf_string: str):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python3 xor_from_buf.py <key> <\"byte[] buf = ...\">")
+        print("Usage: python3 xor_from_file.py <key> <file.txt>")
         sys.exit(1)
 
     key = sys.argv[1].encode()  # Convert the key to bytes
-    buf_string = sys.argv[2]
+    file_path = sys.argv[2]
 
-    xor_encrypt_buf_to_csharp(key, buf_string)
+    xor_encrypt_buf_from_file(key, file_path)
