@@ -6,8 +6,9 @@ def xor_encrypt_buf_from_file(key: bytes, file_path: str):
     with open(file_path, 'r') as file:
         buf_string = file.read()
 
-    # Extract byte array from the provided C# code string
-    match = re.search(r'byte\[\] buf = new byte\[\d+\] \{(.*?)\};', buf_string, re.DOTALL)
+    # Extract the byte array from the provided C# code string
+    # This regex is more lenient with spaces and line breaks
+    match = re.search(r'byte\s*\[\s*\]\s*buf\s*=\s*new\s*byte\s*\[\s*\d+\s*\]\s*\{(.*?)\};', buf_string, re.DOTALL)
     if not match:
         print("Invalid input format. Expected: byte[] buf = new byte[752] {0xfe, 0x4a, ... };")
         sys.exit(1)
