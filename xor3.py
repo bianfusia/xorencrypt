@@ -30,9 +30,9 @@ def xor_encrypt_buf_from_file(key: bytes, file_path: str):
     # Generate the decryption loop with hardcoded key
     decryption_code = (
         "\nbyte[] key = new byte[] {{{key_string}}};\n"
-        "for(int i = 0; i < buf.Length; i++)\n"
+        "for(int j = 0; j < buf.Length; j++)\n"
         "{{\n"
-        "    buf[i] = (byte)(buf[i] ^ key[i % key.Length]);\n"
+        "    buf[j] = (byte)(buf[j] ^ key[j % key.Length]);\n"
         "}}\n"
     ).format(key_string=', '.join(f'0x{byte:02x}' for byte in key))
 
